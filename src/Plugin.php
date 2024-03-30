@@ -105,8 +105,6 @@ class Plugin
             return $transient;
         }
 
-        error_log(print_r($transient, true));
-
         return $transient;
     }
 
@@ -149,7 +147,7 @@ class Plugin
         }
 
         // Validate version
-        if (empty($data['version']) ) {
+        if (empty($data['new_version']) ) {
             throw new Exception('Error: Invalid version');
         }
 
