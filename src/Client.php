@@ -16,6 +16,7 @@
 namespace Appcheap;
 
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Client as HttpClient;
 
 /**
  * The Appcheap Client
@@ -101,9 +102,9 @@ class Client
      */
     protected function createDefaultHttpClient()
     {
-        return new \GuzzleHttp\Client(
+        return new HttpClient(
             [
-            'base_uri' => $this->_config['api_url'],
+            'base_uri' => $this->_config['api_uri'],
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
