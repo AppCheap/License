@@ -62,7 +62,7 @@ class Plugin
 
     /**
      * Run WordPress Filter and Action
-     *
+     * 
      * @return void
      */
     public function run()

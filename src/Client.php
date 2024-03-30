@@ -104,7 +104,7 @@ class Client
     {
         return new HttpClient(
             [
-            'base_uri' => $this->_config['api_uri'],
+            'base_uri' => $this->_config['base_uri'],
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
@@ -112,6 +112,18 @@ class Client
             ],
             ]
         );
+    }
+
+    /**
+     * Set the HTTP client.
+     * 
+     * @param ClientInterface $http The HTTP client.
+     * 
+     * @return void
+     */
+    public function setHttpClient(ClientInterface $http)
+    {
+        $this->_http = $http;
     }
 
     /**

@@ -1,0 +1,5 @@
+{
+    "phpsab.fixerArguments": [
+        "--ignore=vendor/*"
+    ]
+}
