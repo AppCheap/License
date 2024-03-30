@@ -19,6 +19,7 @@ namespace Appcheap;
 use Appcheap\Client;
 use Appcheap\Model\PluginItem;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
 
 /**
  * The Appcheap Client
@@ -101,7 +102,6 @@ class Plugin
                 $transient->no_update[ $this->_base_name ] = $item->toObject();
             }
         } catch ( Exception $e ) {
-            error_log($e->getMessage());
             return $transient;
         }
 
@@ -132,6 +132,10 @@ class Plugin
             $response = $http->request('GET', 'plugin/update', $params);
         } catch ( ClientException $e ) {
             throw new Exception("Error: Call API failed");
+        } catch ( ConnectException $e ) {
+            throw new Exception("Error: Call API failed");
+        } catch ( Exception $e ) {
+            throw new Exception("Error: Call API failed");
         }
 
         // Validate the response
@@ -152,18 +156,6 @@ class Plugin
         }
 
         return $data;
-    }
-
-    /**
-     * Pre Update Data
-     *
-     * @param array $data The data.
-     *
-     * @return object
-     */
-    public function preUpdateData( $data )
-    {
-        return (object) $data;
     }
 
     /**
