@@ -106,10 +106,11 @@ class Client
             [
             'base_uri' => $this->_config['base_uri'],
             'headers' => [
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-                'X-Identify' => $this->_config['identify'],
-            ],
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/json',
+                    'X-Identify' => $this->_config['identify'],
+                    'User-Agent' => 'Appcheap/' . self::VER . ' ('. get_site_url() .')'
+                ],
             ]
         );
     }

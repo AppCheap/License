@@ -150,3 +150,15 @@ class ClientTest extends TestCase
         );
     }
 }
+
+if (!function_exists('get_site_url')) {
+    /**
+     * Get site url
+     * 
+     * @return string
+     */
+    function get_site_url()
+    {
+        return 'http://appcheap.io';
+    }
+}

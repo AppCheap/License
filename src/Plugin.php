@@ -129,7 +129,7 @@ class Plugin
         );
 
         try {
-            $response = $http->request('GET', 'plugin/update', $params);
+            $response = $http->request('GET', '/plugin-update', $params);
         } catch ( ClientException $e ) {
             throw new Exception("Error: Call API failed");
         } catch ( ConnectException $e ) {
