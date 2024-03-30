@@ -1,0 +1,32 @@
+/vendor/
+/node_modules/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore configuration files that may contain sensitive information
+.env
+
+# Ignore PHPStorm project files
+.idea/
+
+# Ignore files related to testing
+/phpunit.xml
+/.phpunit.result.cache
+
+# Ignore Composer's lock file
+/composer.lock
+/composer.phar
+
+# Ignore application storage
+/storage/*.key
+/storage/debugbar/
+/storage/framework/
+/storage/logs/
+
+# Ignore public storage
+/public/storage
+
+# Ignore compiled files
+/bootstrap/cache/
