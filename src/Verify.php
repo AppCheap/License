@@ -140,4 +140,63 @@ class Verify
             throw new Exception('Error deactivate license!');
         }
     }
+
+    /**
+     * Request check status
+     * 
+     * @return array
+     */
+    public function requestCheckStatus()
+    {
+        $license = $this->_licenseStore->get();
+
+        if (empty($license)) {
+            return [
+                'status' => 'inactive',
+                'message' => 'License not found.',
+            ];
+        }
+
+        $data = Obfuscate::decode($license);
+
+        if (empty($data) || !isset($data['expired'])) {
+            return [
+                'status' => 'inactive',
+                'message' => 'License not found.',
+            ];
+        }
+
+        $expired = strtotime($data['expired']);
+        $now = time();
+
+        $key = Helper::generateUniqueKey();
+
+        if ($expired < $now) {
+            return [
+                'status' => 'inactive',
+                'message' => 'License expired.',
+            ];
+        }
+        
+        $cache = new Cache($key);
+        // Expire in 5 minutes
+        $cache->set(new Status($data), 'license', 300);
+
+        return [
+            'key' => $key,
+        ];
+    }
+
+    /**
+     * Check status
+     * 
+     * @param string $key The key.
+     * 
+     * @return Status
+     */
+    public function checkStatus(string $key)
+    {
+        $cache = new Cache($key);
+        return $cache;
+    }
 }
