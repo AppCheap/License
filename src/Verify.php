@@ -61,7 +61,7 @@ class Verify
      * 
      * @return void
      */
-    public function createLicensePage($params)
+    public function registerLicensePage($params)
     {
         $licensePage = new LicensePage($this, $params);
         $licensePage->register();

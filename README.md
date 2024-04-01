@@ -44,7 +44,7 @@ $plugin->run();
 ```php
 $verify = new Appcheap\Verify( $client );
 
-$license_page = $verify->createLicensePage(
+$license_page = $verify->registerLicensePage(
 	array(
 		'parent_slug' => 'options-general.php',
 		'page_title'  => 'License',

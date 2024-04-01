@@ -10,7 +10,7 @@
         "phpunit/phpunit": "^9.6",
         "squizlabs/php_codesniffer": "^3.9"
     },
-    "license": "APPCHEAP-LICENSE",
+    "license": "proprietary",
     "autoload": {
         "psr-4": {
             "Appcheap\\": "src/"
