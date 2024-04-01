@@ -15,9 +15,6 @@
 
 namespace Appcheap;
 
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ConnectException;
-
 /**
  * The Appcheap Verify
  *
@@ -31,18 +28,16 @@ class Verify
 {
 
     /**
-     * The Appcheap Client
-     *
-     * @var Client $_client
+     * The license store
+     * 
+     * @var Store $_licenseStore
      */
-    private Client $_client;
+    private Store $_licenseStore;
 
     /**
-     * The key of the license
-     * 
-     * @var string $key
+     * The request object
      */
-    private string $_key;
+    private Request $_request;
 
     /**
      * Construct the Appcheap Verify.
@@ -53,8 +48,26 @@ class Verify
      */
     public function __construct( Client $client )
     {
-        $this->_client = $client;
-        $this->_key = $client->getConfig()['identify'] . '-license';
+        $this->_request = new Request($client);
+        $this->_licenseStore = new Store($this->_getKey($client));
+    }
+
+    /**
+     * Get key
+     * 
+     * @param Client $client The client.
+     * 
+     * @return string
+     */
+    private function _getKey(Client $client)
+    {
+        $config = $client->getConfig();
+        
+        if (isset($config['identify'])) {
+            return $config['identify'] . '-license';
+        }
+
+        return 'app-builder-license';
     }
 
     /**
@@ -63,98 +76,67 @@ class Verify
      * @param string $license The license.
      * @param string $email   The email.
      * 
-     * @return void
+     * @return bool
      * 
      * @throws Exception
      */
     public function activate(string $license, string $email)
     {
-
-        $http = $this->_client->getHttpClient();
-
         $data = [
             'license' => $license,
             'email' => $email,
         ];
 
-        try {
-            $response = $http->request('POST', '/activate', ['json' => $data]);
-        } catch (ClientException $e) {
-            throw new Exception('Client error!');
-        } catch (ConnectException $e) {
-            throw new Exception('Connect error!');
-        } catch (Exception $e) {
-            throw new Exception('Unknow error!');
+        $body = $this->_request->sendRequest('POST', '/activate', ['json' => $data]);
+
+        // Check if request failed
+        if ($body && isset($body['error'])) {
+            throw new Exception($body['error']);
         }
 
-        $body = json_decode($response->getBody()->getContents(), true);
-
+        // Check license status
         if ($body['status'] == 'success') {
-            return $this->_storeLicense($body);
+            return $this->_licenseStore->update($body['data']);
+        } else {
+            throw new Exception('Error activate license!');
         }
-        
-        throw new Exception('Error activate license!');
     }
-        
+       
+    /**
+     *  Deactivate license
+     * 
+     * @return bool
+     * 
+     * @throws Exception
+     */
     public function deactivate()
     {
-     
-        $license = $this->getLicense();
+        $license = $this->_licenseStore->get();
 
         if (empty($license)) {
-            return false;
+            throw new Exception('Error: License not found');
         }
 
-        $http = $this->_client->getHttpClient();
+        $data = [
+            'license' => $license['license'],
+        ];
 
-        try {
-            $response = $http->request('POST', '/deactivate', ['json' => $license]);
-        } catch (ClientException $e) {
-            throw new Exception('Client error!');
-        } catch (ConnectException $e) {
-            throw new Exception('Connect error!');
-        } catch (Exception $e) {
-            throw new Exception('Unknow error!');
+        $body = $this->_request->sendRequest(
+            'POST',
+            '/deactivate',
+            ['json' => $data]
+        );
+
+        // Check if request failed
+        if ($body && isset($body['error'])) {
+            throw new Exception($body['error']);
         }
 
-        $body = json_decode($response->getBody()->getContents(), true);
-
+        // Check license status
         if ($body['status'] == 'success') {
-            return $this->_removeLicense($body);
+            return $this->_licenseStore->delete();
+        } else {
+            throw new Exception('Error deactivate license!');
         }
-
-        throw new Exception('Error deactive license!');
-    }
-
-    /**
-     * Store License
-     * 
-     * @param array $data The data.
-     * 
-     * @return bool
-     */
-    private function _storeLicense($data)
-    {
-        return update_option($this->_key, $data);
-    }
-
-    /**
-     * Get License
-     * 
-     * @return array
-     */
-    public function getLicense()
-    {
-        return get_option($this->_key);
-    }
-
-    /** 
-     * Remove License
-     * 
-     * @return bool
-     */
-    private function _removeLicense()
-    {
-        return delete_option($this->_key);
     }
 }
