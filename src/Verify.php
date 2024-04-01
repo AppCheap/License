@@ -15,6 +15,8 @@
 
 namespace Appcheap;
 
+use PharIo\Manifest\License;
+
 /**
  * The Appcheap Verify
  *
@@ -53,6 +55,19 @@ class Verify
     }
 
     /**
+     * Create license page
+     * 
+     * @param array $params The params.
+     * 
+     * @return void
+     */
+    public function createLicensePage($params)
+    {
+        $licensePage = new LicensePage($this, $params);
+        $licensePage->register();
+    }
+
+    /**
      * Get key
      * 
      * @param Client $client The client.
@@ -82,6 +97,11 @@ class Verify
      */
     public function activate(string $license, string $email)
     {
+
+        if (empty($license) || empty($email)) {
+            throw new Exception('Error: License or email is empty');
+        }
+
         $data = [
             'license' => $license,
             'email' => $email,
@@ -142,6 +162,22 @@ class Verify
     }
 
     /**
+     * Get license
+     * 
+     * @return array
+     */
+    public function getLicense()
+    {
+        $license = $this->_licenseStore->get();
+
+        if (empty($license)) {
+            return [];
+        }
+
+        return Obfuscate::decode($license);
+    }
+
+    /**
      * Request check status
      * 
      * @return array
@@ -180,7 +216,7 @@ class Verify
         
         $cache = new Cache($key);
         // Expire in 5 minutes
-        $cache->set(new Status($data), 'license', 300);
+        $cache->set(new Status($data), '', 300);
 
         return [
             'key' => $key,

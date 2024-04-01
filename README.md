@@ -38,3 +38,18 @@ $client = new Appcheap\Client('PRODUCT_IDENTIFY', 'API_URL');
 $plugin = new Appcheap\Plugin($client, 'PLUGIN_BASE_NAME');
 $plugin->run();
 ```
+
+### Register license page
+
+```php
+$verify = new Appcheap\Verify( $client );
+
+$license_page = $verify->createLicensePage(
+	array(
+		'parent_slug' => 'options-general.php',
+		'page_title'  => 'License',
+		'menu_title'  => 'License',
+		'menu_slug'   => 'appcheap-license',
+	)
+);
+```
