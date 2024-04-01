@@ -96,7 +96,8 @@ class Verify
 
         // Check license status
         if ($body['status'] == 'success') {
-            return $this->_licenseStore->update($body['data']);
+            $encoded = Obfuscate::encode($data);
+            return $this->_licenseStore->update($encoded);
         } else {
             throw new Exception('Error activate license!');
         }
