@@ -64,14 +64,22 @@ class Request
             $response = $http->request($method, $url, $data);
             return json_decode($response->getBody()->getContents(), true);
         } catch (ClientException $e) {
-            return [
-                'error' => $e->getMessage(),
-            ];
+            // Get message from response
+            $response = $e->getResponse();
+            if ($response) {
+                $body = $response->getBody();
+                $content = $body->getContents();
+                return json_decode($content, true);
+            }
         } catch (ConnectException $e) {
-            return ['error' => 'Connection error.'];
+            return [
+                'code' => 'error_connection',
+                'message' => 'Connection error.'
+            ];
         }
         return [
-            'error' => 'Unknown error.',
+            'code' => 'error_unknown',
+            'message' => 'Unknown error.',
         ];
     }
     

@@ -110,17 +110,32 @@ class Verify
         $body = $this->_request->sendRequest('POST', 'activate', ['json' => $data]);
 
         // Check if request failed
-        if ($body && isset($body['error'])) {
-            throw new Exception($body['error']);
+        if ($body && isset($body['message'])) {
+            throw new Exception($body['message']);
         }
 
         // Check license status
-        if ($body['status'] == 'success') {
-            $encoded = Obfuscate::encode($data);
+        if (isset($body['data']) && $this->_isActive($body['data'])) {
+            $encoded = Obfuscate::encode($body);
             return $this->_licenseStore->update($encoded);
         } else {
             throw new Exception('Error activate license!');
         }
+    }
+
+    /**
+     * Check if license is active
+     * 
+     * @param array $data The data.
+     * 
+     * @return bool
+     */
+    private function _isActive($data)
+    {
+        if (empty($data)) {
+            return false;
+        }
+        return isset($data['status']) && $data['status'] == 'active';
     }
        
     /**
@@ -132,7 +147,7 @@ class Verify
      */
     public function deactivate()
     {
-        $license = $this->_licenseStore->get();
+        $license = $this->getLicense();
 
         if (empty($license)) {
             throw new Exception('Error: License not found');
@@ -149,12 +164,12 @@ class Verify
         );
 
         // Check if request failed
-        if ($body && isset($body['error'])) {
-            throw new Exception($body['error']);
+        if ($body && isset($body['message'])) {
+            throw new Exception($body['message']);
         }
 
         // Check license status
-        if ($body['status'] == 'success') {
+        if ($body['status'] == 'inactive') {
             return $this->_licenseStore->delete();
         } else {
             throw new Exception('Error deactivate license!');

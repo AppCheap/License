@@ -133,6 +133,17 @@ class LicensePage
             }
         }
 
+        if (isset($_GET['action']) && $_GET['action'] === 'deactivate') {
+            try {
+                $this->_verify->deactivate();
+                $message = '<div class="notice notice-success"><p>License deactivated successfully.</p></div>';
+                $license_key = '';
+                $license_email = '';
+            } catch (Exception $e) {
+                $message = '<div class="notice notice-error"><p>'. esc_html($e->getMessage()) .'</p></div>';
+            }
+        }
+
         echo '<div class="wrap">';
         echo '<h2>Activate License</h2>';
 
@@ -143,7 +154,7 @@ class LicensePage
             echo '<p>Please enter your license key and email to activate your license.</p>';
         }
 
-        echo '<form method="POST">';
+        echo '<form method="POST" class="submitbox">';
         echo '<table class="form-table">';
         echo '<tr>';
         echo '<th scope="row"><label for="license_key">License Key</label></th>';
@@ -155,6 +166,10 @@ class LicensePage
         echo '</tr>';
         echo '</table>';
         echo '<input type="submit" value="Activate" class="button button-primary">';
+
+        if (isset($data['status']) && $data['status'] === 'active') {
+            echo ' <a href="?page='.$this->menu_slug.'&action=deactivate" class="button submitdelete">Deactivate</a>';
+        }
 
         echo '</form>';
         echo '</div>';
