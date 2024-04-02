@@ -128,6 +128,7 @@ class LicensePage
             try {
                 $this->_verify->activate($license_key, $license_email);
                 $message = '<div class="notice notice-success"><p>License activated successfully.</p></div>';
+                $data['status'] = 'active';
             } catch (Exception $e) {
                 $message = '<div class="notice notice-error"><p>'. esc_html($e->getMessage()) .'</p></div>';
             }
@@ -136,9 +137,8 @@ class LicensePage
         if (isset($_GET['action']) && $_GET['action'] === 'deactivate') {
             try {
                 $this->_verify->deactivate();
-                $message = '<div class="notice notice-success"><p>License deactivated successfully.</p></div>';
-                $license_key = '';
-                $license_email = '';
+                $redirect_url = remove_query_arg('action', $_SERVER['REQUEST_URI']);
+                wp_redirect($redirect_url);
             } catch (Exception $e) {
                 $message = '<div class="notice notice-error"><p>'. esc_html($e->getMessage()) .'</p></div>';
             }
@@ -150,8 +150,6 @@ class LicensePage
         // Show error/success message
         if ($message) {
             echo $message;
-        } else {
-            echo '<p>Please enter your license key and email to activate your license.</p>';
         }
 
         echo '<form method="POST" class="submitbox">';
