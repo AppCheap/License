@@ -163,10 +163,11 @@ class LicensePage
         echo '<td><input type="text" name="license_email" id="license_email" class="regular-text" value="'.$license_email.'" /></td>';
         echo '</tr>';
         echo '</table>';
-        echo '<input type="submit" value="Activate" class="button button-primary">';
-
+        
         if (isset($data['status']) && $data['status'] === 'active') {
             echo ' <a href="?page='.$this->menu_slug.'&action=deactivate" class="button submitdelete">Deactivate</a>';
+        } else {
+            echo '<input type="submit" value="Activate" class="button button-primary">';
         }
 
         echo '</form>';
