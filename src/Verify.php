@@ -107,7 +107,7 @@ class Verify
             'email' => $email,
         ];
 
-        $body = $this->_request->sendRequest('POST', '/activate', ['json' => $data]);
+        $body = $this->_request->sendRequest('POST', 'activate', ['json' => $data]);
 
         // Check if request failed
         if ($body && isset($body['error'])) {
@@ -144,7 +144,7 @@ class Verify
 
         $body = $this->_request->sendRequest(
             'POST',
-            '/deactivate',
+            'deactivate',
             ['json' => $data]
         );
 

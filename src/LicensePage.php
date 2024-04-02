@@ -129,7 +129,7 @@ class LicensePage
                 $this->_verify->activate($license_key, $license_email);
                 $message = '<div class="notice notice-success"><p>License activated successfully.</p></div>';
             } catch (Exception $e) {
-                $message = '<div class="notice notice-error"><p>'.$e->getMessage().'</p></div>';
+                $message = '<div class="notice notice-error"><p>'. esc_html($e->getMessage()) .'</p></div>';
             }
         }
 

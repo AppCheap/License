@@ -65,10 +65,10 @@ class Request
             return json_decode($response->getBody()->getContents(), true);
         } catch (ClientException $e) {
             return [
-                'error' => 'Connection error.',
+                'error' => $e->getMessage(),
             ];
         } catch (ConnectException $e) {
-            return ['error' => 'Connection error'];
+            return ['error' => 'Connection error.'];
         }
         return [
             'error' => 'Unknown error.',
