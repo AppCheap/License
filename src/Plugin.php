@@ -50,9 +50,8 @@ class Plugin
      * Construct the Appcheap Plugin.
      *
      * @param Client $client    The Appcheap Client.
-     * @param string $base_name The base name of the plugin.
      */
-    public function __construct( Client $client, string $base_name )
+    public function __construct( Client $client )
     {
         $this->_client    = $client;
         $this->_base_name = $client->getPluginBaseName();
