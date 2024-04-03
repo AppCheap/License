@@ -216,4 +216,19 @@ class Client
         $plugin_data = get_file_data($plugin_file, ['Text Domain' => 'Text Domain']);
         return $plugin_data['Text Domain'];
     }
+
+    /**
+     * Get the plugin base name.
+     * 
+     * @return string
+     */
+    public function getPluginBaseName()
+    {
+        $plugin_file = $this->getPLuginFile();
+        if (empty($plugin_file)) {
+            return '';
+        }
+
+        return plugin_basename($plugin_file);
+    }
 }

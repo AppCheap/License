@@ -39,7 +39,7 @@ $client = new Appcheap\Client([
 ### Plugin update
 
 ```php
-$plugin = new Appcheap\Plugin($client, 'PLUGIN_BASE_NAME');
+$plugin = new Appcheap\Plugin($client);
 $plugin->run();
 ```
 

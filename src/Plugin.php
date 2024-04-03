@@ -55,7 +55,7 @@ class Plugin
     public function __construct( Client $client, string $base_name )
     {
         $this->_client    = $client;
-        $this->_base_name = $base_name;
+        $this->_base_name = $client->getPluginBaseName();
         $this->run();
     }
 
