@@ -53,11 +53,11 @@ class PluginItem
         $this->url = $data['url'];
         $this->package = $data['package'];
         $this->icons = $data['icons'];
-        $this->banners = $data['banners'];
-        $this->banners_rtl = $data['banners_rtl'];
+        $this->banners = isset($data['banners']) ? $data['banners'] : [];
+        $this->banners_rtl = isset($data['banners_rtl']) ? $data['banners_rtl'] : [];
         $this->tested = $data['tested'];
         $this->requires_php = $data['requires_php'];
-        $this->compatibility = $data['compatibility'];
+        $this->compatibility = isset($data['compatibility']) ? $data['compatibility'] : [];
     }
 
     /**

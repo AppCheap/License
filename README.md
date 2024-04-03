@@ -30,7 +30,11 @@ require_once __DIR__ . '/vendor/autoload.php';
 ### Initialize the client
 
 ```php
-$client = new Appcheap\Client('PRODUCT_IDENTIFY', 'API_URL');
+$client = new Appcheap\Client([
+    'identify' => 'app-builder',
+    'base_uri' => 'https://verify.appcheap.io/api/v1',
+    'plugin_file' => __FILE__,
+]);
 ```
 ### Plugin update
 

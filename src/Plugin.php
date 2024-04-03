@@ -18,8 +18,6 @@ namespace Appcheap;
 
 use Appcheap\Client;
 use Appcheap\Model\PluginItem;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\ConnectException;
 
 /**
  * The Appcheap Client
@@ -93,10 +91,13 @@ class Plugin
 
             $data = $this->getUpdateInfo($license, $base_name);
 
-            $item        = new PluginItem($data);
-            $old_version = $transient->checked[ $this->_base_name ];
+            if (empty($data) || !isset($data['new_version'])) {
+                return $transient;
+            }
 
-            if ($item->hasNewVersion($old_version) ) {
+            $item        = new PluginItem($data);
+
+            if ($item->hasNewVersion($this->_client->getPluginVersion()) ) {
                 $transient->response[ $this->_base_name ] = $item->toObject();
             } else {
                 $transient->no_update[ $this->_base_name ] = $item->toObject();
@@ -120,42 +121,17 @@ class Plugin
      */
     public function getUpdateInfo( string $license, string $base_name )
     {
-
-        $http = $this->_client->getHttpClient();
-
-        $params = array(
-            'license'   => $license,
-            'base_name' => $base_name,
-        );
-
         try {
-            $response = $http->request('GET', '/plugin-update', $params);
-        } catch ( ClientException $e ) {
-            throw new Exception("Error: Call API failed");
-        } catch ( ConnectException $e ) {
-            throw new Exception("Error: Call API failed");
+            $request = new Request($this->_client);
+            $params = array(
+                'license'   => $license,
+                'base_name' => $base_name,
+            );
+            $data = $request->sendRequest('GET', 'plugin-update', ['query' => $params]);
+            return $data;
         } catch ( Exception $e ) {
-            throw new Exception("Error: Call API failed");
+            throw new Exception($e->getMessage());
         }
-
-        // Validate the response
-        if ($response->getStatusCode() !== 200 ) {
-            throw new Exception('Error: ' . $response->getStatusCode());
-        }
-
-        $data = json_decode($response->getBody(), true);
-
-        // Validate data
-        if (empty($data) ) {
-            throw new Exception('Error: Invalid data');
-        }
-
-        // Validate version
-        if (empty($data['new_version']) ) {
-            throw new Exception('Error: Invalid version');
-        }
-
-        return $data;
     }
 
     /**

@@ -15,7 +15,6 @@
 
 namespace Appcheap;
 
-use PharIo\Manifest\License;
 
 /**
  * The Appcheap Verify
@@ -28,6 +27,13 @@ use PharIo\Manifest\License;
  */
 class Verify
 {
+
+    /**
+     * The License object
+     * 
+     * @var License $_license
+     */
+    private License $_license;
 
     /**
      * The license store
@@ -51,7 +57,8 @@ class Verify
     public function __construct( Client $client )
     {
         $this->_request = new Request($client);
-        $this->_licenseStore = new Store($this->_getKey($client));
+        $this->_license = $client->getLicense();
+        $this->_licenseStore = new Store($client->getKey());
     }
 
     /**
@@ -65,24 +72,6 @@ class Verify
     {
         $licensePage = new LicensePage($this, $params);
         $licensePage->register();
-    }
-
-    /**
-     * Get key
-     * 
-     * @param Client $client The client.
-     * 
-     * @return string
-     */
-    private function _getKey(Client $client)
-    {
-        $config = $client->getConfig();
-        
-        if (isset($config['identify'])) {
-            return $config['identify'] . '-license';
-        }
-
-        return 'app-builder-license';
     }
 
     /**
@@ -124,6 +113,16 @@ class Verify
     }
 
     /**
+     * Get license infomation
+     * 
+     * @return array
+     */
+    public function getLicense()
+    {
+        return $this->_license->getLicense();
+    }
+
+    /**
      * Check if license is active
      * 
      * @param array $data The data.
@@ -147,7 +146,7 @@ class Verify
      */
     public function deactivate()
     {
-        $license = $this->getLicense();
+        $license = $this->_license->getLicense();
 
         if (empty($license)) {
             throw new Exception('Error: License not found');
@@ -174,22 +173,6 @@ class Verify
         } else {
             throw new Exception('Error deactivate license!');
         }
-    }
-
-    /**
-     * Get license
-     * 
-     * @return array
-     */
-    public function getLicense()
-    {
-        $license = $this->_licenseStore->get();
-
-        if (empty($license)) {
-            return [];
-        }
-
-        return Obfuscate::decode($license);
     }
 
     /**

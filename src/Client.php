@@ -66,6 +66,7 @@ class Client
             [
             'identify' => 'app-builder',
             'base_uri' => 'https://verify.appcheap.io/api/v1',
+            'plugin_file' => '',
             ], $config
         );
 
@@ -135,5 +136,57 @@ class Client
     public function getLibraryVersion()
     {
         return self::VER;
+    }
+
+     /**
+      * Get key
+      * 
+      * @return string
+      */
+    public function getKey()
+    {
+        $config = $this->_config;
+        
+        if (isset($config['identify'])) {
+            return $config['identify'] . '-license';
+        }
+
+        return 'app-builder-license';
+    }
+
+    /**
+     * Get the License object.
+     * 
+     * @return License
+     */
+    public function getLicense()
+    {
+        return new License($this);
+    }
+
+    /**
+     * Get the plugin file path.
+     * 
+     * @return string
+     */
+    public function getPLuginFile()
+    {
+        return $this->_config['plugin_file'];
+    }
+
+    /**
+     * Get the plugin version.
+     * 
+     * @return string
+     */
+    public function getPluginVersion()
+    {
+        $plugin_file = $this->getPLuginFile();
+        if (empty($plugin_file)) {
+            return '';
+        }
+
+        $plugin_data = get_file_data($plugin_file, ['Version' => 'Version']);
+        return $plugin_data['Version'];
     }
 }
