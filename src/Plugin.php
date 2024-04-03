@@ -146,7 +146,30 @@ class Plugin
      */
     public function pluginsApi( $res, $action, $args )
     {
-        return $res;
+        if ($action !== 'plugin_information') {
+            return $res;
+        }
+
+        if (empty($args->slug) || $args->slug !== $this->_client->getPluginSlug()) {
+            return $res;
+        }
+
+        try {
+            $license   = $this->_client->getLicenseKey();
+            $base_name = $this->_base_name;
+
+            $data = $this->getUpdateInfo($license, $base_name);
+
+            if (empty($data)) {
+                return $res;
+            }
+
+            $item = new PluginItem($data);
+
+            return $item->toObject(true);
+        } catch ( Exception $e ) {
+            return $res;
+        }
     }
 
 }

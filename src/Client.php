@@ -200,4 +200,20 @@ class Client
         $plugin_data = get_file_data($plugin_file, ['Version' => 'Version']);
         return $plugin_data['Version'];
     }
+
+    /**
+     * Get the plugin slug.
+     * 
+     * @return string
+     */
+    public function getPluginSlug()
+    {
+        $plugin_file = $this->getPLuginFile();
+        if (empty($plugin_file)) {
+            return '';
+        }
+
+        $plugin_data = get_file_data($plugin_file, ['Text Domain' => 'Text Domain']);
+        return $plugin_data['Text Domain'];
+    }
 }
