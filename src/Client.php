@@ -165,6 +165,17 @@ class Client
     }
 
     /**
+     * Get license key
+     * 
+     * @return string
+     */
+    public function getLicenseKey()
+    {
+        $license = $this->getLicense()->getLicense();
+        return $license['license'] ?? '';
+    }
+
+    /**
      * Get the plugin file path.
      * 
      * @return string

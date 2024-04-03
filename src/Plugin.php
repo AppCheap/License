@@ -85,8 +85,9 @@ class Plugin
         }
 
         try {
+            
             // Check for updates
-            $license   = 'your_license_key';
+            $license   = $this->_client->getLicenseKey();
             $base_name = $this->_base_name;
 
             $data = $this->getUpdateInfo($license, $base_name);
