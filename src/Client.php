@@ -159,9 +159,9 @@ class Client
      * 
      * @return License
      */
-    public function getLicense()
+    public function getLicenseInstance()
     {
-        return new License($this);
+        return new License($this->getKey());
     }
 
     /**
@@ -171,7 +171,7 @@ class Client
      */
     public function getLicenseKey()
     {
-        $license = $this->getLicense()->getLicense();
+        $license = $this->getLicenseInstance()->getLicense();
         return $license['license'] ?? '';
     }
 

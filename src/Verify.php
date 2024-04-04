@@ -36,13 +36,6 @@ class Verify
     private License $_license;
 
     /**
-     * The license store
-     * 
-     * @var Store $_licenseStore
-     */
-    private Store $_licenseStore;
-
-    /**
      * The request object
      */
     private Request $_request;
@@ -57,8 +50,11 @@ class Verify
     public function __construct( Client $client )
     {
         $this->_request = new Request($client);
-        $this->_license = $client->getLicense();
-        $this->_licenseStore = new Store($client->getKey());
+        $this->_license = $client->getLicenseInstance();
+        
+        add_action('schedule_license_callback', array($this, 'verify'));
+
+        new Schedule($client);
     }
 
     /**
@@ -105,8 +101,7 @@ class Verify
 
         // Check license status
         if (isset($body['data']) && $this->_isActive($body['data'])) {
-            $encoded = Obfuscate::encode($body);
-            return $this->_licenseStore->update($encoded);
+            return $this->_license->updateLicense($body);
         } else {
             throw new Exception('Error activate license!');
         }
@@ -169,9 +164,45 @@ class Verify
 
         // Check license status
         if ($body['status'] == 'inactive') {
-            return $this->_licenseStore->delete();
+            return $this->_license->deleteLicense();
         } else {
             throw new Exception('Error deactivate license!');
+        }
+    }
+
+    /**
+     * Verify license
+     * 
+     * @return bool
+     * 
+     * @throws Exception
+     */
+    public function verify()
+    {
+        $license = $this->_license->getLicense();
+
+        if (empty($license)) {
+            throw new Exception('Error: License not found');
+        }
+
+        if (empty($data)) {
+            throw new Exception('Error: License not found');
+        }
+
+        $body = $this->_request->sendRequest(
+            'POST',
+            'verify',
+            ['json' => $data]
+        );
+
+        // Check if request failed
+        if ($body && isset($body['message'])) {
+            throw new Exception($body['message']);
+        }
+
+        // Check license status
+        if (isset($body['data']['status']) && $body['data']['status'] !== 'active') {
+            return $this->_license->updateLicense($body);
         }
     }
 
@@ -182,16 +213,14 @@ class Verify
      */
     public function requestCheckStatus()
     {
-        $license = $this->_licenseStore->get();
+        $data = $this->_license->getLicense();
 
-        if (empty($license)) {
+        if (empty($data)) {
             return [
                 'status' => 'inactive',
                 'message' => 'License not found.',
             ];
         }
-
-        $data = Obfuscate::decode($license);
 
         if (empty($data) || !isset($data['expired'])) {
             return [

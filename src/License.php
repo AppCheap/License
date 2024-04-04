@@ -26,14 +26,6 @@ namespace Appcheap;
  */
 class License
 {
-
-    /**
-     * The Appcheap Client
-     *
-     * @var Client $_client
-     */
-    private Client $_client;
-
     /**
      * The license store
      * 
@@ -44,12 +36,11 @@ class License
     /**
      * Construct the Appcheap Plugin.
      *
-     * @param Client $client The Appcheap Client.
+     * @param String $key The license key.
      */
-    public function __construct( Client $client)
+    public function __construct( String $key)
     {
-        $this->_client = $client;
-        $this->_licenseStore = new Store($client->getKey());
+        $this->_licenseStore = new Store($key);
     }
 
      /**
@@ -66,6 +57,28 @@ class License
         }
 
         return Obfuscate::decode($license);
+    }
+
+    /**
+     * Update license
+     * 
+     * @param array $data The data.
+     * 
+     * @return bool
+     */
+    public function updateLicense($data)
+    {
+        return $this->_licenseStore->update(Obfuscate::encode($data));
+    }
+
+    /**
+     * Delete license
+     * 
+     * @return bool
+     */
+    public function deleteLicense()
+    {
+        return $this->_licenseStore->delete();
     }
 
     /**
