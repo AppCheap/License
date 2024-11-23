@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright 2024 Appcheap
  * Licensed under the Appcheap License, Version 1.0,
@@ -47,11 +48,11 @@ class Verify
      * 
      * @return void
      */
-    public function __construct( Client $client )
+    public function __construct(Client $client)
     {
         $this->_request = new Request($client);
         $this->_license = $client->getLicenseInstance();
-        
+
         add_action('schedule_license_callback', array($this, 'verify'));
 
         new Schedule($client);
@@ -68,6 +69,17 @@ class Verify
     {
         $licensePage = new LicensePage($this, $params);
         $licensePage->register();
+    }
+
+    /**
+     * Register rest api for activate, deactivate, verify
+     * 
+     * @return void
+     */
+    public function registerRestApi($params)
+    {
+        $licenseRestApi = new LicenseRestApi($this, $params);
+        $licenseRestApi->register();
     }
 
     /**
@@ -131,7 +143,7 @@ class Verify
         }
         return isset($data['status']) && $data['status'] == 'active';
     }
-       
+
     /**
      *  Deactivate license
      * 
@@ -240,7 +252,7 @@ class Verify
                 'message' => 'License expired.',
             ];
         }
-        
+
         $cache = new Cache($key);
         // Expire in 5 minutes
         $cache->set(new Status($data), '', 300);

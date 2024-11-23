@@ -57,3 +57,16 @@ $license_page = $verify->registerLicensePage(
 	)
 );
 ```
+
+### Register rest api for license activation and deactivation
+
+```php
+$verify = new Appcheap\Verify( $client );
+
+$verify->registerRestApi(
+    array(
+        'namespace' => 'appcheap/v1',
+        'route'     => '/license',
+    )
+);
+```
