@@ -133,13 +133,22 @@ class LicenseRestApi
             return new \WP_Error('license_email_empty', 'License or email is empty', array('status' => 400));
         }
 
-        if ($type === 'activate') {
-            $response =  $this->_verify->activate($license, $email);
-        } else {
-            $response =  $this->_verify->deactivate($license, $email);
+        $status = 200;
+        try {
+            if ($type === 'activate') {
+                $response =  $this->_verify->activate($license, $email);
+            } else {
+                $response =  $this->_verify->deactivate($license, $email);
+            }
+        } catch (Exception $e) {
+            $status = 404;
+            $response = array(
+                "status"       => false,
+                "message"      => $e -> getMessage(),
+            );
         }
 
-        return new \WP_REST_Response($response);
+        return new \WP_REST_Response($response, $status);
     }
 
     /**
