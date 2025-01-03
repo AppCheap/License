@@ -62,7 +62,7 @@ class Request
         try {
             $http = $this->_client->getHttpClient();
             $response = $http->request($method, $url, $data);
-            return json_decode($response->getBody()->getContents(), true);
+            return json_decode($response->getBody(), true);
         } catch (ClientException $e) {
             // Get message from response
             $response = $e->getResponse();
