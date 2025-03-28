@@ -127,7 +127,7 @@ class Plugin
                 'license'   => $license,
                 'base_name' => $base_name,
             );
-            $data = $request->sendRequest('GET', 'plugin-update', ['query' => $params]);
+            $data = $request->sendRequest('POST', 'plugin-update', ['query' => $params]);
             return $data;
         } catch ( Exception $e ) {
             throw new Exception($e->getMessage());
